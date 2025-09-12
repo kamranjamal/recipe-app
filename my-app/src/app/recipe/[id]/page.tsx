@@ -52,6 +52,18 @@ export default function RecipeDetailPage() {
     if (payload.success) setRecipe(payload.data);
   }
 
+  async function deleteRecipe() {
+    if (!confirm("Are you sure you want to delete this recipe?")) return;
+    const res = await fetch(`/api/recipe/${id}`, {
+      method: "DELETE",
+    });
+    const payload = await res.json();
+    if (payload.success) {
+      router.push("/"); // Or navigate to category list if you want
+    } else {
+      alert(payload.message || "Failed to delete");
+    }
+  }
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#FFEEE7] via-white to-[#FFEEE7] text-[#5C3D2E]">
@@ -71,12 +83,37 @@ export default function RecipeDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#FFEEE7] via-white to-[#FFEEE7] text-[#5C3D2E] p-6 overflow-y-scroll">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="p-3 rounded-full bg-[#E0AB8B] text-white hover:bg-[#c89273] transition"
-        >
-          ← Back
-        </button>
+         <div className="flex justify-between items-center">
+          <button
+            onClick={() => router.back()}
+            className="p-3 rounded-full bg-[#E0AB8B] text-white hover:bg-[#c89273] transition"
+          >
+            ← Back
+          </button>
+
+          {/* Delete button */}
+          <button
+            onClick={deleteRecipe}
+            className="p-3 rounded-full bg-red-500 text-white hover:bg-red-600 transition"
+            title="Delete Recipe"
+          >
+            {/* Trash SVG */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
 
         {/* Hero Image */}
         <motion.img
@@ -170,7 +207,7 @@ export default function RecipeDetailPage() {
               onChange={(e) => setStep(e.target.value)}
               placeholder="Add step"
             />
-            <button
+             <button
               onClick={() => {
                 if (step.trim()) {
                   updateRecipe({ action: "add-step", step });
@@ -181,6 +218,7 @@ export default function RecipeDetailPage() {
             >
               Add
             </button>
+           
           </div>
         </section>
 

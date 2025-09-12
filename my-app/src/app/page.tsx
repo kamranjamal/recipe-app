@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 interface ICategory {
   _id: string;
@@ -20,9 +21,12 @@ export default function Home() {
       const payload = await res.json();
       if (payload.success) {
         setCategories(payload.data);
+      } else {
+        toast.error(payload.message || "Failed to fetch categories");
       }
     } catch (err) {
       console.error("Failed to fetch categories", err);
+      toast.error("Error fetching categories");
     } finally {
       setLoading(false);
     }
@@ -34,15 +38,27 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCategory.trim()) return;
+    if (!newCategory.trim()) return toast.error("Category name is required");
 
-    await fetch("/api/category", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newCategory }),
-    });
-    setNewCategory("");
-    fetchCategories();
+    try {
+      const res = await fetch("/api/category", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCategory }),
+      });
+
+      const payload = await res.json();
+      if (payload.success) {
+        toast.success("Category created 🎉");
+        setNewCategory("");
+        fetchCategories();
+      } else {
+        toast.error(payload.message || "Failed to create category");
+      }
+    } catch (err) {
+      console.error("Error creating category", err);
+      toast.error("Error creating category");
+    }
   };
 
   return (
@@ -145,10 +161,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {categories.map((cat, idx) => (
-                <div
-                  key={cat._id}
-                  className="perspective-[1000px]" // parent perspective
-                >
+                <div key={cat._id} className="perspective-[1000px]">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
