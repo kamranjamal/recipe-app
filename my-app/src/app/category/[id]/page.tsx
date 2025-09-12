@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type RecipeBrief = {
   _id: string;
@@ -117,7 +118,7 @@ export default function CategoryPage() {
                   onClick={() => router.push(`/recipe/${r._id}`)}
                   className="cursor-pointer bg-gradient-to-br from-[#fff2ea] to-[#f6d4c4] rounded-xl overflow-hidden shadow-lg hover:shadow-[#E0AB8B]/50 hover:scale-105 transition-transform"
                 >
-                  <img
+                  <Image
                     src={r.imageUrl}
                     alt={r.name}
                     className="w-full h-40 object-cover"

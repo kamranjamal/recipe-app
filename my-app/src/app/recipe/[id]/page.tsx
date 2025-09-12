@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type Recipe = {
   _id: string;
@@ -42,7 +43,7 @@ export default function RecipeDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  async function updateRecipe(data: any) {
+  async function updateRecipe(data:any ) {
     const res = await fetch(`/api/recipe/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -129,7 +130,7 @@ export default function RecipeDetailPage() {
         {recipe.gallery && recipe.gallery.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {recipe.gallery.map((img, idx) => (
-              <img
+              <Image
                 key={idx}
                 src={img}
                 alt={`gallery-${idx}`}

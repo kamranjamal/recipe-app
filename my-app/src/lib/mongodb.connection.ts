@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 
-const MONGODB_URI:string = process.env.MONGODB_URI;
+const MONGODB_URI: string = process.env.MONGODB_URI!;
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -8,13 +8,26 @@ if (!MONGODB_URI) {
   );
 }
 
-let cached = global.mongoose ;
+// 1. Define the interface for our cached mongoose connection.
+interface MongooseCache {
+  conn: Mongoose | null;
+  promise: Promise<Mongoose> | null;
+}
+
+// 2. Augment the NodeJS.Global interface to add our 'mongoose' property.
+// This tells TypeScript that we are adding a 'mongoose' property to the global object.
+declare global {
+  var mongoose: MongooseCache;
+}
+
+
+let cached = global.mongoose;
 
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function dbConnect() {
+async function dbConnect(): Promise<Mongoose> {
   if (cached.conn) {
     return cached.conn;
   }
@@ -24,10 +37,11 @@ async function dbConnect() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      return mongooseInstance;
     });
   }
+  
   cached.conn = await cached.promise;
   return cached.conn;
 }

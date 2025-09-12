@@ -4,6 +4,7 @@ import CategoryModel, { ICategory } from "@/models/category.model";
 
 export async function GET(_req: NextRequest) {
   try {
+    if(_req) console.log(_req)
     await dbConnect();
     const categories: ICategory[] = await CategoryModel.find({}).lean();
     return NextResponse.json({ success: true, data: categories }, { status: 200 });

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Upload } from "lucide-react";
 
-export default function NewRecipePage() {
+function RecipeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoryId");
@@ -80,7 +80,7 @@ export default function NewRecipePage() {
             className="w-full p-3 rounded-md border border-[#E0AB8B]/50 bg-[#fffdfc]/70 text-[#4a2c1a] placeholder-[#a88570] focus:ring-2 focus:ring-[#E0AB8B]"
           />
 
-          {/* Upload field with icon */}
+          {/* Upload field */}
           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#E0AB8B]/60 rounded-lg cursor-pointer bg-[#fffdfc]/70 hover:bg-[#fbe6da] transition">
             <Upload className="w-8 h-8 text-[#c97c54] mb-2" />
             <span className="text-sm text-[#7a5c49]">
@@ -106,5 +106,13 @@ export default function NewRecipePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function NewRecipePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RecipeForm />
+    </Suspense>
   );
 }
