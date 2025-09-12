@@ -131,6 +131,8 @@ export default function RecipeDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {recipe.gallery.map((img, idx) => (
               <Image
+               width={128}
+                  height={128}
                 key={idx}
                 src={img}
                 alt={`gallery-${idx}`}

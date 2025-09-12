@@ -119,6 +119,8 @@ export default function CategoryPage() {
                   className="cursor-pointer bg-gradient-to-br from-[#fff2ea] to-[#f6d4c4] rounded-xl overflow-hidden shadow-lg hover:shadow-[#E0AB8B]/50 hover:scale-105 transition-transform"
                 >
                   <Image
+                  width={160}
+                  height={160}
                     src={r.imageUrl}
                     alt={r.name}
                     className="w-full h-40 object-cover"
