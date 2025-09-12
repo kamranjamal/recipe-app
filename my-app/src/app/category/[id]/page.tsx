@@ -51,6 +51,12 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 text-white">
       <div className="max-w-3xl mx-auto">
+         <button
+          onClick={() => router.back()}
+          className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform flex items-center"
+        >
+          ← Back
+        </button>
         <header className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
@@ -60,9 +66,9 @@ export default function CategoryPage() {
           </div>
           <button
             onClick={() => router.push(`/recipe/new?categoryId=${id}`)}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform"
+            className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform sticky bottom-3 right-3"
           >
-            + Add Recipe
+            + Add
           </button>
         </header>
 

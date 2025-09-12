@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 type Recipe = {
@@ -13,10 +13,12 @@ type Recipe = {
   steps?: string[];
   notes?: { text: string; createdAt: string }[];
   likes: number;
+  gallery?: string[]; // new field for extra images
 };
 
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,12 +47,31 @@ export default function RecipeDetailPage() {
     if (payload.success) setRecipe(payload.data);
   }
 
-  if (loading) return <p className="p-4 text-slate-400">Loading…</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+        <motion.div
+          className="w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        />
+      </div>
+    );
+
   if (!recipe) return <p className="p-4 text-red-400">Recipe not found.</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white p-6 overflow-y-scroll">
       <div className="max-w-3xl mx-auto space-y-8">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform flex items-center"
+
+        >
+          ← Back
+        </button>
+
         {/* Hero Image */}
         <motion.img
           src={recipe.imageUrl}
@@ -60,6 +81,25 @@ export default function RecipeDetailPage() {
           transition={{ duration: 0.6 }}
           className="w-full h-72 object-cover rounded-2xl shadow-2xl"
         />
+
+        {/* Gallery */}
+        {recipe.gallery && recipe.gallery.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-2 md:grid-cols-3 gap-4"
+          >
+            {recipe.gallery.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`gallery-${idx}`}
+                className="w-full h-32 object-cover rounded-lg shadow-md hover:scale-105 transition"
+              />
+            ))}
+          </motion.div>
+        )}
 
         {/* Title + description */}
         <div className="space-y-2">
@@ -152,7 +192,7 @@ export default function RecipeDetailPage() {
             ))}
           </ul>
           <div className="mt-3 flex gap-2">
-            <input
+            <textarea
               className="flex-1 p-2 rounded-md bg-slate-900/70 border border-slate-700 focus:ring-2 focus:ring-purple-500 outline-none"
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -165,7 +205,7 @@ export default function RecipeDetailPage() {
                   setNote("");
                 }
               }}
-              className="bg-purple-600 hover:bg-purple-700 px-3 rounded-md transition"
+              className="bg-purple-600 hover:bg-purple-700 px-3 rounded-md transition h-fit px-3 py-2"
             >
               Save
             </button>

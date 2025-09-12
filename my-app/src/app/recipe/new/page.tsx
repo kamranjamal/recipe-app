@@ -48,6 +48,13 @@ export default function NewRecipePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-6 text-white">
       <div className="max-w-lg mx-auto space-y-6">
+         <button
+          onClick={() => router.back()}
+          className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform flex items-center"
+         
+        >
+          ← Back
+        </button>
         <h1 className="text-2xl font-bold">Create New Recipe</h1>
         <form onSubmit={handleSubmit} className="space-y-4 bg-slate-800/60 p-4 rounded-xl shadow-lg">
           <input
