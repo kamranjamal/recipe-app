@@ -13,8 +13,14 @@ type Recipe = {
   steps?: string[];
   notes?: { text: string; createdAt: string }[];
   likes: number;
-  gallery?: string[]; // new field for extra images
+  gallery?: string[];
 };
+
+const Skeleton = ({ className }: { className: string }) => (
+  <div
+    className={`animate-pulse bg-gradient-to-r from-[#E0AB8B]/40 via-[#FFEEE7] to-[#E0AB8B]/40 rounded-md ${className}`}
+  />
+);
 
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +28,6 @@ export default function RecipeDetailPage() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // form states
   const [note, setNote] = useState("");
   const [ingredient, setIngredient] = useState("");
   const [step, setStep] = useState("");
@@ -49,25 +54,26 @@ export default function RecipeDetailPage() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-        <motion.div
-          className="w-12 h-12 border-4 border-cyan-400 border-t-transparent rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-        />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#FFEEE7] via-white to-[#FFEEE7] text-[#5C3D2E]">
+        <div className="w-full max-w-2xl space-y-6 p-6">
+          <Skeleton className="w-32 h-10" />
+          <Skeleton className="w-full h-72" />
+          <Skeleton className="w-1/2 h-6" />
+          <Skeleton className="w-full h-24" />
+        </div>
       </div>
     );
 
-  if (!recipe) return <p className="p-4 text-red-400">Recipe not found.</p>;
+  if (!recipe)
+    return <p className="p-4 text-red-600">Recipe not found.</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white p-6 overflow-y-scroll">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFEEE7] via-white to-[#FFEEE7] text-[#5C3D2E] p-6 overflow-y-scroll">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform flex items-center"
-
+          className="p-3 rounded-full bg-[#E0AB8B] text-white hover:bg-[#c89273] transition"
         >
           ← Back
         </button>
@@ -79,58 +85,56 @@ export default function RecipeDetailPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="w-full h-72 object-cover rounded-2xl shadow-2xl"
+          className="w-full h-72 object-cover rounded-2xl shadow-lg border border-[#E0AB8B]/40"
         />
 
         {/* Gallery */}
         {recipe.gallery && recipe.gallery.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4"
-          >
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {recipe.gallery.map((img, idx) => (
               <img
                 key={idx}
                 src={img}
                 alt={`gallery-${idx}`}
-                className="w-full h-32 object-cover rounded-lg shadow-md hover:scale-105 transition"
+                className="w-full h-32 object-cover rounded-lg shadow border border-[#E0AB8B]/40 hover:opacity-90 transition"
               />
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Title + description */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-extrabold tracking-tight text-[#E0AB8B]">
             {recipe.name}
           </h1>
           {recipe.description && (
-            <p className="text-slate-300 leading-relaxed">{recipe.description}</p>
+            <p className="text-[#5C3D2E] leading-relaxed">
+              {recipe.description}
+            </p>
           )}
         </div>
 
         {/* Like button */}
-        <motion.button
-          whileTap={{ scale: 0.9 }}
+        <button
           onClick={() => updateRecipe({ action: "like" })}
-          className="bg-gradient-to-r from-pink-500 to-red-500 px-5 py-2 rounded-lg shadow-lg hover:opacity-90 transition"
+          className="bg-[#E0AB8B] text-white px-5 py-2 rounded-lg shadow hover:bg-[#c89273] transition"
         >
           ❤️ {recipe.likes}
-        </motion.button>
+        </button>
 
         {/* Ingredients */}
-        <section className="bg-slate-800/50 p-5 rounded-xl shadow-xl backdrop-blur-md">
-          <h2 className="text-2xl font-semibold mb-3">🥕 Ingredients</h2>
-          <ul className="list-disc list-inside space-y-1 text-slate-300">
+        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40">
+          <h2 className="text-2xl font-semibold mb-3 text-[#5C3D2E]">
+            🥕 Ingredients
+          </h2>
+          <ul className="list-disc list-inside space-y-1 text-[#5C3D2E]">
             {(recipe.ingredients ?? []).map((i, idx) => (
               <li key={idx}>{i}</li>
             ))}
           </ul>
           <div className="mt-3 flex gap-2">
             <input
-              className="flex-1 p-2 rounded-md bg-slate-900/70 border border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 p-2 rounded-md bg-white border border-[#E0AB8B]/40 focus:ring-2 focus:ring-[#E0AB8B] outline-none"
               value={ingredient}
               onChange={(e) => setIngredient(e.target.value)}
               placeholder="Add ingredient"
@@ -142,7 +146,7 @@ export default function RecipeDetailPage() {
                   setIngredient("");
                 }
               }}
-              className="bg-blue-600 hover:bg-blue-700 px-3 rounded-md transition"
+              className="bg-[#E0AB8B] text-white hover:bg-[#c89273] px-3 rounded-md transition"
             >
               Add
             </button>
@@ -150,16 +154,18 @@ export default function RecipeDetailPage() {
         </section>
 
         {/* Steps */}
-        <section className="bg-slate-800/50 p-5 rounded-xl shadow-xl backdrop-blur-md">
-          <h2 className="text-2xl font-semibold mb-3">📖 Steps</h2>
-          <ol className="list-decimal list-inside space-y-2 text-slate-300">
+        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40">
+          <h2 className="text-2xl font-semibold mb-3 text-[#5C3D2E]">
+            📖 Steps
+          </h2>
+          <ol className="list-decimal list-inside space-y-2 text-[#5C3D2E]">
             {(recipe.steps ?? []).map((s, idx) => (
               <li key={idx}>{s}</li>
             ))}
           </ol>
           <div className="mt-3 flex gap-2">
             <input
-              className="flex-1 p-2 rounded-md bg-slate-900/70 border border-slate-700 focus:ring-2 focus:ring-green-500 outline-none"
+              className="flex-1 p-2 rounded-md bg-white border border-[#E0AB8B]/40 focus:ring-2 focus:ring-[#E0AB8B] outline-none"
               value={step}
               onChange={(e) => setStep(e.target.value)}
               placeholder="Add step"
@@ -171,7 +177,7 @@ export default function RecipeDetailPage() {
                   setStep("");
                 }
               }}
-              className="bg-green-600 hover:bg-green-700 px-3 rounded-md transition"
+              className="bg-[#E0AB8B] text-white hover:bg-[#c89273] px-3 rounded-md transition"
             >
               Add
             </button>
@@ -179,13 +185,15 @@ export default function RecipeDetailPage() {
         </section>
 
         {/* Notes */}
-        <section className="bg-slate-800/50 p-5 rounded-xl shadow-xl backdrop-blur-md">
-          <h2 className="text-2xl font-semibold mb-3">📝 Notes</h2>
-          <ul className="space-y-2 text-slate-400">
+        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40">
+          <h2 className="text-2xl font-semibold mb-3 text-[#5C3D2E]">
+            📝 Notes
+          </h2>
+          <ul className="space-y-2 text-[#5C3D2E]">
             {(recipe.notes ?? []).map((n, idx) => (
-              <li key={idx} className="border-b border-slate-700 pb-1">
+              <li key={idx} className="border-b border-[#E0AB8B]/30 pb-1">
                 {n.text}{" "}
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[#E0AB8B]">
                   ({new Date(n.createdAt).toLocaleDateString()})
                 </span>
               </li>
@@ -193,7 +201,7 @@ export default function RecipeDetailPage() {
           </ul>
           <div className="mt-3 flex gap-2">
             <textarea
-              className="flex-1 p-2 rounded-md bg-slate-900/70 border border-slate-700 focus:ring-2 focus:ring-purple-500 outline-none"
+              className="flex-1 p-2 rounded-md bg-white border border-[#E0AB8B]/40 focus:ring-2 focus:ring-[#E0AB8B] outline-none"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Add note"
@@ -205,7 +213,7 @@ export default function RecipeDetailPage() {
                   setNote("");
                 }
               }}
-              className="bg-purple-600 hover:bg-purple-700 px-3 rounded-md transition h-fit px-3 py-2"
+              className="bg-[#E0AB8B] text-white hover:bg-[#c89273] px-3 rounded-md transition h-fit px-3 py-2"
             >
               Save
             </button>

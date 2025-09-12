@@ -49,24 +49,25 @@ export default function CategoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#ffeee7] via-[#fff4ef] to-[#ffeee7] p-4 text-[#4a2c1a]">
       <div className="max-w-3xl mx-auto">
-         <button
+        <button
           onClick={() => router.back()}
-          className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform flex items-center"
+          className="p-3 rounded-full bg-gradient-to-r from-[#E0AB8B] to-[#c97c54] shadow-md hover:scale-105 transition-transform flex items-center text-white"
         >
           ← Back
         </button>
+
         <header className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-[#E0AB8B] to-[#c97c54] bg-clip-text text-transparent">
               Recipes
             </h1>
-            <p className="text-xs text-slate-400">Category: {id}</p>
+            <p className="text-xs text-[#7a5c49]">Category: {id}</p>
           </div>
           <button
             onClick={() => router.push(`/recipe/new?categoryId=${id}`)}
-            className="p-3  rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-md hover:scale-105 transition-transform sticky bottom-3 right-3"
+            className="p-3 rounded-full bg-gradient-to-r from-[#E0AB8B] to-[#c97c54] shadow-md hover:scale-105 transition-transform sticky bottom-3 right-3 text-white"
           >
             + Add
           </button>
@@ -79,17 +80,28 @@ export default function CategoryPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search recipes..."
-            className="w-full p-3 rounded-lg border border-slate-700 bg-slate-800/60 placeholder-slate-400 focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg border border-[#E0AB8B]/40 bg-[#fff7f3]/70 placeholder-[#a88570] focus:ring-2 focus:ring-[#E0AB8B] text-[#4a2c1a]"
           />
         </div>
 
         {/* Listing */}
         {loading ? (
-          <div className="py-8 text-center text-sm text-slate-400 animate-pulse">
-            Loading…
+          <div className={`grid gap-4 ${gridCols}`}>
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-[#f6d4c4]/60 rounded-xl overflow-hidden shadow-md animate-pulse"
+              >
+                <div className="w-full h-40 bg-[#E0AB8B]/40"></div>
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-[#E0AB8B]/40 rounded w-3/4"></div>
+                  <div className="h-3 bg-[#E0AB8B]/30 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredRecipes.length === 0 ? (
-          <div className="py-8 text-center text-sm text-slate-400">
+          <div className="py-8 text-center text-sm text-[#a88570]">
             No recipes yet — be the first to add one!
           </div>
         ) : (
@@ -103,7 +115,7 @@ export default function CategoryPage() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, delay: idx * 0.05 }}
                   onClick={() => router.push(`/recipe/${r._id}`)}
-                  className="cursor-pointer bg-slate-800/70 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-transform"
+                  className="cursor-pointer bg-gradient-to-br from-[#fff2ea] to-[#f6d4c4] rounded-xl overflow-hidden shadow-lg hover:shadow-[#E0AB8B]/50 hover:scale-105 transition-transform"
                 >
                   <img
                     src={r.imageUrl}
@@ -111,9 +123,13 @@ export default function CategoryPage() {
                     className="w-full h-40 object-cover"
                   />
                   <div className="p-3">
-                    <h3 className="text-lg font-semibold">{r.name}</h3>
-                    <p className="text-xs text-slate-400">
-                      {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
+                    <h3 className="text-lg font-semibold text-[#5a3725]">
+                      {r.name}
+                    </h3>
+                    <p className="text-xs text-[#7a5c49]">
+                      {r.createdAt
+                        ? new Date(r.createdAt).toLocaleDateString()
+                        : ""}
                     </p>
                   </div>
                 </motion.div>
