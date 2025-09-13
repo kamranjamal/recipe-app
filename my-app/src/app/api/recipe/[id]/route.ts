@@ -1,5 +1,4 @@
 // File: src/app/api/recipe/[id]/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb.connection";
 import Recipe from "@/models/recipe.model";
@@ -8,12 +7,14 @@ import { getDataFromToken } from "@/helpers/jwt.helper";
 // Get a single recipe, ensuring it belongs to the user
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const userId = await getDataFromToken(request);
     await dbConnect();
-    const recipe = await Recipe.findOne({ _id: params.id, userId });
+
+    const recipe = await Recipe.findOne({ _id: id, userId });
 
     if (!recipe) {
       return NextResponse.json(
@@ -24,20 +25,24 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: recipe });
   } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
   }
 }
 
 // Delete a recipe, ensuring it belongs to the user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const userId = await getDataFromToken(request);
     await dbConnect();
 
-    const deletedRecipe = await Recipe.findOneAndDelete({ _id: params.id, userId });
+    const deletedRecipe = await Recipe.findOneAndDelete({ _id: id, userId });
 
     if (!deletedRecipe) {
       return NextResponse.json(
@@ -47,15 +52,19 @@ export async function DELETE(
     }
     return NextResponse.json({ success: true, message: "Recipe deleted" });
   } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
   }
 }
+
 /**
  * Handles PATCH requests to update a recipe (e.g., likes, ingredients, etc.).
  */
 export async function PATCH(
   request: NextRequest,
- context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await context.params;
@@ -108,4 +117,3 @@ export async function PATCH(
     );
   }
 }
-
