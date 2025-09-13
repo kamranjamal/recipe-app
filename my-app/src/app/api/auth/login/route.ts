@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Create token
-    const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {
+    const token = jwt.sign(tokenData, process.env.TOKEN_SECRET! || "my lazy secret", {
       expiresIn: "1d",
     });
 
