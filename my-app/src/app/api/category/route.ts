@@ -1,36 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb.connection";
-import CategoryModel, { ICategory } from "@/models/category.model";
+import Category from "@/models/category.model";
+import { getDataFromToken } from "@/helpers/jwt.helper";
 
-export async function GET(_req: NextRequest) {
+// Get all categories for the logged-in user
+export async function GET(request: NextRequest) {
   try {
-    if(_req) console.log(_req)
+    const userId = await getDataFromToken(request);
     await dbConnect();
-    const categories: ICategory[] = await CategoryModel.find({}).lean();
-    return NextResponse.json({ success: true, data: categories }, { status: 200 });
-  } catch (error) {
-    console.error("GET /api/category error:", error);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    const categories = await Category.find({ userId }).sort({ createdAt: -1 });
+    return NextResponse.json({ success: true, data: categories });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 401 });
   }
 }
 
-export async function POST(req: NextRequest) {
+// Create a new category for the logged-in user
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json();
-
-    if (!body?.name || typeof body.name !== "string") {
-      return NextResponse.json(
-        { success: false, message: "Name is required" },
-        { status: 400 }
-      );
-    }
-
+    const userId = await getDataFromToken(request);
+    const { name } = await request.json();
     await dbConnect();
-    const category = await CategoryModel.create({ name: body.name.trim() });
 
-    return NextResponse.json({ success: true, data: category }, { status: 201 });
-  } catch (error) {
-    console.error("POST /api/category error:", error);
-    return NextResponse.json({ success: false, message: "Failed to create category" }, { status: 400 });
+    const newCategory = new Category({ name, userId });
+    await newCategory.save();
+
+    return NextResponse.json(
+      { success: true, message: "Category created", data: newCategory },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 400 });
   }
 }

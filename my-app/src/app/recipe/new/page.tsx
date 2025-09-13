@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useState, Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Upload } from "lucide-react";
+import toast from "react-hot-toast";
 
 function RecipeForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoryId");
 
@@ -15,19 +15,29 @@ function RecipeForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Redirect if categoryId is missing
+  useEffect(() => {
+    if (!categoryId) {
+        toast.error("Category not found. Redirecting...");
+        window.location.href = "/";
+    }
+  }, [categoryId]);
+
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError("");
     if (!name.trim()) return setError("Please enter a recipe name");
     if (!imageFile) return setError("Please upload an image");
+    if (!categoryId) return setError("Category ID is missing");
 
     setLoading(true);
-    setError("");
 
     try {
       const formData = new FormData();
       formData.append("name", name.trim());
       formData.append("description", description.trim());
-      formData.append("categoryId", categoryId || "");
+      formData.append("categoryId", categoryId);
       formData.append("file", imageFile);
 
       const res = await fetch("/api/recipe", {
@@ -36,12 +46,16 @@ function RecipeForm() {
       });
       const payload = await res.json();
 
-      if (!payload.success)
-        throw new Error(payload.message || "Failed to create");
+      if (!payload.success) {
+        throw new Error(payload.message || "Failed to create recipe");
+      }
+      
+      toast.success("Recipe created successfully!");
+      window.location.href = `/category/${categoryId}`;
 
-      router.push(`/category/${categoryId}`);
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
@@ -51,7 +65,7 @@ function RecipeForm() {
     <div className="min-h-screen bg-gradient-to-br from-[#ffeee7] via-[#fff4ef] to-[#ffeee7] p-6 text-[#4a2c1a]">
       <div className="max-w-lg mx-auto space-y-6">
         <button
-          onClick={() => router.back()}
+          onClick={() => window.history.back()}
           className="p-3 rounded-full bg-gradient-to-r from-[#E0AB8B] to-[#c97c54] shadow-md hover:scale-105 transition-transform flex items-center text-white"
         >
           ← Back
@@ -77,6 +91,7 @@ function RecipeForm() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
+            rows={4}
             className="w-full p-3 rounded-md border border-[#E0AB8B]/50 bg-[#fffdfc]/70 text-[#4a2c1a] placeholder-[#a88570] focus:ring-2 focus:ring-[#E0AB8B]"
           />
 
@@ -94,7 +109,7 @@ function RecipeForm() {
             />
           </label>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
             type="submit"
@@ -111,7 +126,7 @@ function RecipeForm() {
 
 export default function NewRecipePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
       <RecipeForm />
     </Suspense>
   );

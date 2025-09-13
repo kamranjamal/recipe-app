@@ -18,6 +18,7 @@ export interface IRecipe extends Document {
   likes: number;
   createdAt: Date;
   updatedAt: Date;
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
 const NoteSchema = new Schema<INote>({
@@ -49,6 +50,7 @@ const RecipeSchema = new Schema<IRecipe>(
       required: [true, "Category is required."],
     },
     likes: { type: Number, default: 0, min: 0 },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
