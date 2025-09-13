@@ -7,7 +7,7 @@ export const getDataFromToken = (request: NextRequest): string => {
     if (!token) {
       throw new Error("No token found");
     }
-    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET! || "my lazy secret");
     return decodedToken.id;
   } catch (error: any) {
     throw new Error(error.message);
