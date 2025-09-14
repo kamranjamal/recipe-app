@@ -139,7 +139,7 @@ export default function RecipeDetailPage() {
 
         {/* Title + Description */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center rounded-lg p-2 shadow-md bg-[#FFEEE7]">
+          <div className="flex justify-between items-center rounded-lg p-2 shadow-md bg-[#FFEEE7] overflow-hidden">
             {isEditingTitle ? (
               <input
                 value={titleValue}
@@ -161,7 +161,7 @@ export default function RecipeDetailPage() {
             </button>
           </div>
 
-          <div className="bg-[#FFEEE7] rounded-md mt-2 mb-3 relative shadow-md p-3">
+          <div className="bg-[#FFEEE7] rounded-md mt-2 mb-3 relative shadow-md p-3 overflow-hidden">
             {isEditingDescription ? (
               <textarea
                 value={descValue}
@@ -196,7 +196,7 @@ export default function RecipeDetailPage() {
         </button>
 
         {/* Ingredients */}
-        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40">
+        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40 overflow-x-hidden">
           <h2 className="text-2xl font-semibold mb-3 text-[#5C3D2E]">
             🥕 Ingredients
           </h2>
@@ -258,7 +258,7 @@ export default function RecipeDetailPage() {
         </section>
 
         {/* Notes */}
-        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40">
+        <section className="bg-[#FFEEE7] p-5 rounded-xl shadow-md border border-[#E0AB8B]/40 overflow-x-hidden">
           <h2 className="text-2xl font-semibold mb-3 text-[#5C3D2E]">
             📝 Notes
           </h2>
